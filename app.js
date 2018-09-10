@@ -8,17 +8,25 @@ var modules = require('./MyModules/functions');
 const MONGO_URL = 'mongodb://tapuser:Banco123@ds243212.mlab.com:43212/tap';
 
 //const MongoClient = require('mongodb').MongoClient;
-
+mongoose.connect(MONGO_URL);
+mongoose.Promise = global.Promise;
 
 // Middleware que toma los datos del body y los parsea a json
 app.use(bodyParser.json());
 // Inicializo los endpoints, previamente que fueron importados de modulos
 app.use('/api',require('./routes/api'));
 
-// Me conecto con mongoose
-mongoose.connect(MONGO_URL);
-mongoose.Promise = global.Promise;
+// Manejador de errores
+app.use(function(err,req,res,next){
+  console.log(err);
+});
+        
+        
 
+// Me conecto con mongoose
+
+const db = mongoose.connection;
+db.on('error',console.error.bind(console,'Connection error:'));
 
 
 //const Usuario = mongoose.model('usuario',usuarioSchema);

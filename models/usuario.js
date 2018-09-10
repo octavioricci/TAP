@@ -13,5 +13,6 @@ const usuarioSchema = new Schema({
 });
 
 // Creo el modelo 
-const UsuarioModelo = mongoose.model('usuario',usuarioSchema);
-exports.module = UsuarioModelo;
+// el primer argumento es la collection, el segundo el esquema
+const UsuarioModel = mongoose.model('usuario',usuarioSchema);
+module.exports = UsuarioModel;
