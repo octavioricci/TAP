@@ -1,0 +1,26 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "TAP [Corbat, Juan Ignacio-Ricci, Octavio]",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/octavioricci/TAP.git"
+  },
+  "author": "Corbat-Ricci",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/octavioricci/TAP/issues"
+  },
+  "homepage": "https://github.com/octavioricci/TAP#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "mongojs": "^2.6.0",
+    "mongoose": "^5.2.13",
+    "nodemon": "^1.18.4"
+  }
+}
