@@ -18,7 +18,8 @@ app.use('/api',require('./routes/api'));
 
 // Manejador de errores
 app.use(function(err,req,res,next){
-  console.log(err);
+  //console.log(err);
+  res.status(422).send({error:err.message});
 });
         
         
