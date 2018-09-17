@@ -1,5 +1,6 @@
 var express=require('express');
 var bodyParser=require('body-parser');
+const router = require('./routes/api');
 var app=express();
 const mongoose=require('mongoose');
 var url = require('url');
@@ -7,22 +8,32 @@ var modules = require('./MyModules/functions');
 
 const MONGO_URL = 'mongodb://tapuser:Banco123@ds243212.mlab.com:43212/tap';
 
+
+
 //const MongoClient = require('mongodb').MongoClient;
 mongoose.connect(MONGO_URL);
 mongoose.Promise = global.Promise;
 
 // Middleware que toma los datos del body y los parsea a json
+
+
+app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
+ 
 // Inicializo los endpoints, previamente que fueron importados de modulos
 app.use('/api',require('./routes/api'));
 
 // Manejador de errores
-app.use(function(err,req,res,next){
+app.use(function(req,res,next){
   //console.log(err);
-  res.status(422).send({error:err.message});
+  //res.status(422).send({error:err.message});
+  console.log("Time: ", Date.now());
+  next();
 });
-        
-        
+router.use(function(user,req,res,next){
+  res.status(200).send(user);
+});     
+  
 
 // Me conecto con mongoose
 

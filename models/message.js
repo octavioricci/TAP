@@ -21,10 +21,10 @@ var messageSchema = new Schema({
     },
     wasRead:{
       type: Boolean,
-      required: [true, "Was Read is required"]
+      required: [false, "Was Read is required"]
     }
      
 });
 
 const MessageModel = mongoose.model('message',messageSchema);
-module.exports=messageSchema;
+module.exports=MessageModel;
