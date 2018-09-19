@@ -16,8 +16,8 @@ var messageSchema = new Schema({
       required: [true, "Message is required"]
     },
     dateSend:{
-      type: String,
-      required: [true, "Date is required"]
+      type: Date,
+      default: Date.now
     },
     wasRead:{
       type: Boolean,

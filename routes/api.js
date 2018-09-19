@@ -175,6 +175,7 @@ router.get('/users/login/:name',function(req,res,next){
     }
     else if(exist){
       res.status(200).send("Bienvenido "+req.params.name+" al chat");
+     
     }
     
     });
@@ -183,25 +184,57 @@ router.get('/users/login/:name',function(req,res,next){
 
 // 
 router.post('/messages', function(req,res,next){
- 
-        const token = req.headers['authorization'];
-        
+   
+    var token = req.headers['authorization'];
+    
+    if(!token) return res.status(403).send({auth:false,message:"No se pasó token"});  
+    jwt.verify(token,config.secret,function(err,decoded){
+      if(err){
+        return res.status(500).send({auth:false, message:"Hubo un error con la validación del token"});
+      // Si se validó bien el token
+      } 
+      // Si el token de quien envia el mensaje está bien
+      // Busco si existe a quien se lo quiero enviar 
+     });
+     
+      var body = req.body;
+      // TODO: A partir de aca, se pierde el req.body???
+      Register.findOne({"name":req.body.to},function (err,exist){
+      if(err){
+        res.status(500).send("Hubo un error");
+      }
+      if(!exist){
+        res.status(505).send("El usuario al que quiere enviar el mensaje no existe");
+      }
+      // Si el usuario no existe, procedo a registrarlo
+      else if(exist){
+        Message.create(body).then(function(message){
+          res.send(message);
+        });
+      }
+           
+  });
+         
        
         /*Message.create({
           from: req.body.from,
           to: req.body.to,
           message: req.body.message,
           dateSend: req.body.dateSend*/          
-        Message.create(req.body).then(function(message){
+        //Message.create(req.body).then(function(message){
             
             // Acá creo el token
           // Genera un payload, que contendría el register.id
           // Junto con la secret key y el payload genera el token 
-            
+       // Register.findOne({_id:req.id},{password:0},function(err,user){
+       //   if(err) return res.status(500).send("Hubo un problema para encontrar el usuario");
+        //  if(!user) return res.status(404).send("No se pudo encontrar el usuario");
+        //  res.status(200).send(user);
+        //});    
           
-          res.status(200).send({status:"ok", message:"Se ha registrado correctamente"});
           
-        });
+          
+        //});
     
     //if(err) return res.status(500).send("Hubo un problema para encontrar el usuario");
     //if(!user) return res.status(404).send("No se pudo encontrar el usuario");
@@ -232,7 +265,9 @@ router.post('/users/login',function(req,res){
          
         // Si la clave no coincide con la almacenada en la bbdd
         if (!compareHashPassword) return res.status(401).send({status:"error",message:"password inválida"});        
-         var token = jwt.sign({ id: exist._id }, config.secret, {
+        
+        // Si la clave existe, genero 
+        var token = jwt.sign({ id: exist._id }, config.secret, {
            expiresIn: 86400 
           
          });// exira en 2 minutos
