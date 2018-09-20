@@ -4,7 +4,7 @@ const router = require('./routes/api');
 var app=express();
 const mongoose=require('mongoose');
 var url = require('url');
-var modules = require('./MyModules/functions');
+var modules = require('./MyModules/myFunctions');
 
 const MONGO_URL = 'mongodb://tapuser:Banco123@ds243212.mlab.com:43212/tap';
 

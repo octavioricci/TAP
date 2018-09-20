@@ -3,6 +3,7 @@ const router = express.Router();
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config/config');
+var functions = require('../MyModules/myFunctions');
 const Register = require('../models/register');
 const Login = require('../models/login');
 const Message = require('../models/message');
@@ -10,28 +11,9 @@ const MessageReceived = require('../models/messageReceived');
 const MessageSent = require('../models/messageSent');
 const Response = require('../models/response');
 
-function verifyToken(req,res,next){
-  const token = req.headers['authorization'];
-  
-  if(!token) return res.status(403).send({auth:false,message:"No se pasó token"});  
-  
-  // Si se ha pasado token
-  jwt.verify(token,config.secret,function(err,decoded){
-    if(err){
-      return res.status(500).send({auth:false, message:"Hubo un error con la validación del token"});
-      // Si se validó bien el token
-    } 
-      req.id=decoded.id;
-      next();
-    
-  });
-}
-
-
-
 // Aqui me devuelve el usuario que corresponde al token que le paso a través del postman
 // Poniendo en password: 0 evitamos que salga. es una projection
-router.get('/users/me', verifyToken, function(req, res,next) {
+router.get('/users/me', functions.verifyToken, function(req, res,next) {
   
   /*var token = req.headers['authorization'];
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
@@ -99,7 +81,7 @@ router.post('/users/register',function(req,res,next){
             var token = jwt.sign({id: register._id}, config.secret, {
               expiresIn: 86400 // expira en una hora
             });
-          
+          console.log(register);
           res.status(200).send({status:"ok", message:"Se ha registrado correctamente"});
           
         });
@@ -183,9 +165,9 @@ router.get('/users/login/:name',function(req,res,next){
 
 
 // 
-router.post('/messages', function(req,res,next){
+router.post('/messages',functions.verifyToken, function(req,res,next){
    
-    var token = req.headers['authorization'];
+    /* var token = req.headers['authorization'];
     
     if(!token) return res.status(403).send({auth:false,message:"No se pasó token"});  
     jwt.verify(token,config.secret,function(err,decoded){
@@ -195,11 +177,12 @@ router.post('/messages', function(req,res,next){
       } 
       // Si el token de quien envia el mensaje está bien
       // Busco si existe a quien se lo quiero enviar 
-     });
-     
+     }); */
+      console.log(req.body);
+      /*
       var body = req.body;
       // TODO: A partir de aca, se pierde el req.body???
-      Register.findOne({"name":req.body.to},function (err,exist){
+      Register.findOne({"_id":req.id},function (err,exist){
       if(err){
         res.status(500).send("Hubo un error");
       }
