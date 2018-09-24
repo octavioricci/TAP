@@ -6,107 +6,36 @@ const mongoose=require('mongoose');
 var url = require('url');
 var modules = require('./MyModules/myFunctions');
 
+// Configuro la conexión a MONGO en la nube
 const MONGO_URL = 'mongodb://tapuser:Banco123@ds243212.mlab.com:43212/tap';
 
-
-
-//const MongoClient = require('mongodb').MongoClient;
-mongoose.connect(MONGO_URL);
+// Conecto y seteo promise
+mongoose.connect(MONGO_URL, function(err, success){
+  if (err){
+    console.log("Error al conectarse a la base: " + err.message);
+  }
+  if (success){
+    cosole.log("Se conectó exitosamente a la bbdd");
+  }
+});
 mongoose.Promise = global.Promise;
 
 // Middleware que toma los datos del body y los parsea a json
-
-
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
  
-// Inicializo los endpoints, previamente que fueron importados de modulos
+// Monto el router como un middleware en el path /api
+// Es el equivalente a : 
+//                      const router = require('./routes/api');
+//                      app.user('api'/,router);
 app.use('/api',require('./routes/api'));
 
-// Manejador de errores
+
+// Midleware que antes de cada peticion al router muestra la fecha 
 app.use(function(req,res,next){
-  //console.log(err);
-  //res.status(422).send({error:err.message});
-  console.log("Time: ", Date.now());
+  console.log("API Chat V0.1 - Date: ", new Date());
   next();
 });
-router.use(function(user,req,res,next){
-  res.status(200).send(user);
-});     
-  
-
-// Me conecto con mongoose
-
-const db = mongoose.connection;
-db.on('error',console.error.bind(console,'Connection error:'));
-
-
-//const Usuario = mongoose.model('usuario',usuarioSchema);
-// Connect to MongoDb Cloud Database
-/*
-MongoClient.connect(MONGO_URL, (err,db) => {
-  if(err) {
-    return console.log(err);
-  }
-  else{
-    console.log("Conexión a Mongo OK");
-  }});
-*/
-
-  /*
-// Insert on Database
-  db.collection('chat').insertOne(
-     {
-        title: 'Prueba',
-        text: 'Esto es una prueba'
-
-     },
-    function(err,res){
-      if(err){
-        db.close();
-        return console.log(err);
-      }      
-      else
-        db.close();
-    }
-  );
-*/
-//app.user(express.static('public'));
-/*
-app.get('/',function(req,res){
-    res.sendFile(__dirname + '/index.html')
-    
-});
-
-app.get('/usuarios', function (req, res){
-  
-    if(req.query !=={}){
-      console.log("Entre");
-      var parsed = url.parse(req.url, true).query; 
-      var from = parsed.from;
-      var to = parsed.to;
-      var message = parsed.message;
-      
-      console.log("from: "+from+" to: "+to+" message: "+message);
-    }
- 
-app.post('register',function(req,res)){
-  
-             
-
-}
-    
-    /*if(from == "" || message == "" || to == ""){
-         res.write(modules.error());
-    }
-    else{
-        res.write(modules.greetings());
-    }
-  
-  
-res.end();  
-});
-*/
 
 app.listen(8080,function(){
     console.log("Server listening on por 8080")

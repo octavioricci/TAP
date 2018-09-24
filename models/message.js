@@ -3,14 +3,14 @@ const Schema=mongoose.Schema;
 
 var messageSchema = new Schema({
   
-    from: {
+   from: {
       type: String,
       required: [true, "From is required"]
     },
-    to: {
+    to: [{
       type: String,
       required: [true, "To is required"]
-    },
+    }],
     message:{
       type: String,
       required: [true, "Message is required"]

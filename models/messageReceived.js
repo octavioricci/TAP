@@ -3,16 +3,16 @@ const Schema = mongoose.Schema;
 
 var messageReceivedSchema = new Schema({
     
-      status: {
+       status: {
         type: String,
         required: [true,"Status is required"]
       },
-      totalMessages: {
-        type: Number,
-        required: [true, "Total Messages is required"]
-      },
-      messageFrom: [{
-        from: {
+       messageFrom: {
+            type: String,
+            required: [true, "From is required"]
+        },
+       
+        messageTo: {
             type: String,
             required: [true, "From is required"]
         },
@@ -21,17 +21,14 @@ var messageReceivedSchema = new Schema({
             default: false                               
         },
         sent: {
-            type: String,
-            require: [true, "Sent is required"]
+            type: Date,
+            default: Date.now
         },
         wasRead: {
             type: Boolean,
             require: [true, "Was read is required"]
         }
-                                      
-                                       
-      }] 
-  
+
 });
 
 const MessageReceivedModel = mongoose.model('messagereceived',messageReceivedSchema);

@@ -12,7 +12,8 @@ const registerSchema = new Schema({
     },
   email: {
       type: String,
-      default: false
+      unique: true,
+      required: [true, "Email is required"] 
   }
 });
 
