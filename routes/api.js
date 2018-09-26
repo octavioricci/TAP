@@ -83,35 +83,7 @@ router.get('/myMessages',functions.verifyToken,function(req,res){
     });
 });
 
-/*
-router.get('/myNewMessages', functions.verifyToken, function(req,res){
-  
-  Register.find({"name":req.body.to},function (err,exist){
-      if(err){
-        res.status(500).send("Hubo un error");
-      }
-      if(!exist){
-        res.status(505).send("El usuario al que quiere enviar el mensaje no existe");
-      }
-      // Si el usuario no existe, procedo a registrarlo
-      else if(exist){
-        MessageReceived.create({
-          status:"OK",
-          messageFrom:req.body.from,
-          messageTo:req.body.message,
-          wasRead:"NO",
-          message:req.body.message,
-          sent:req.body.dateSend
-        }).
-        Message.create(req.body).then(function(message){
-          res.send(message);
-        });
-      }
-           
-    });
-  
-});
-*/
+
 
 // Registro de usuarios
 router.post('/users/register',function(req,res,next){
@@ -151,6 +123,7 @@ router.post('/users/register',function(req,res,next){
    
 });
  
+// Endpoint donde envío los mensajes a uno o mas usuarios
 router.post('/messages',functions.verifyToken, function(req,res,next){
    
     
@@ -174,7 +147,7 @@ router.post('/messages',functions.verifyToken, function(req,res,next){
 });
 
 
-
+// Endpoint que me indica quienes están logueados
 router.post('/users/login',function(req,res){
   Register.findOne({"email":req.body.email}, function(err,exist){
     if(err) return res.status(500).send({status:error,message:"Hubo un error de login"});
@@ -207,18 +180,18 @@ router.post('/users/login',function(req,res){
   });
 });
 
-
-router.put('/users/:id',function(req,res,next){
+// Endpoint 
+router.put('/users/:id',functions.verifyToken,function(req,res){
   // El userID que ingreso en el navegador es reemplazado por el indicado por el body a través del postman
-  User.findByIdAndUpdate({_id:req.params.id},req.body).then(function(){
-    User.findOne({_id:req.params.id}).then(function(user){
+  Register.findByIdAndUpdate({_id:req.params.id},req.body).then(function(user){
+    Register.findOne({_id:req.params.id}).then(function(user){
        res.send(user);                                          
-    });       
+    });      
   });
 });
 
 
-router.delete('/users/:email',function(req,res,next){
+router.delete('/users/:email', functions.verifyToken, function(req,res,next){
    Register.findOneAndDelete({email:req.params.email}).then(function(user){
     res.send(user);
   }) 

@@ -1,5 +1,5 @@
-# T�cnincas Avanzadas de Programación
-## Trabajo Pr�ctico API Rest Chat
+# Técnincas Avanzadas de Programación
+## Trabajo Práctico API Rest Chat
 
 ### Integrantes
 Corbat, Ignacio
