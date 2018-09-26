@@ -11,6 +11,25 @@ const MessageReceived = require('../models/messageReceived');
 const MessageSent = require('../models/messageSent');
 const Response = require('../models/response');
 
+
+
+router.get('/users',function(req,res,next){	
+  Register.find({}).then(function(listOfUsers){	
+    var arrayUsers = [];
+    
+    for (var i=0; i<listOfUsers.length; i++){
+      arrayUsers.push({
+        name: listOfUsers[i].name,
+        email: listOfUsers[i].email
+      });
+    }
+    res.send(arrayUsers);                     
+  }).catch(function(err){
+      res.status(500).send('Hubo un error recuperando los usuarios', error.message);
+  });
+});  
+
+
 // Aqui me devuelve el usuario que corresponde al token que le paso a través del postman
 // Poniendo en password: 0 evitamos que salga. es una projection
 router.get('/users/me', functions.verifyToken, function(req, res,next) {
