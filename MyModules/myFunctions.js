@@ -23,4 +23,15 @@ exports.verifyToken = function (req,res,next){
  
 }
 
+exports.verifyLogin=function(login){
+  try {
+    jwt.verify(login.lastToken, config.secret)
+      console.log("Devuelvo lastToken: "+login.lastToken);
+      return true
+  } catch(err) {
+      return false
+  }    
+  
+}
+
 

@@ -4,11 +4,19 @@ const Schema = mongoose.Schema;
 var loginSchema = new Schema({
     username:{
       type: String,
-      required: [true,"Username is required"]
+      required: [false]
     },
-    password:{
+    email:{
       type:String,
-      required:[true,"Password is required"]
-}
+      required:[true,"Email is required"]
+
+    },
+    lastToken:{
+      type:String,
+      required:[true,"Token is required"]
+    }
   
 });
+
+const LoginModel = mongoose.model('login',loginSchema);
+module.exports = LoginModel;

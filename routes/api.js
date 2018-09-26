@@ -12,6 +12,30 @@ const MessageSent = require('../models/messageSent');
 const Response = require('../models/response');
 
 
+// Me lista los usuarios conectados
+// Y elimina los logins viejos
+router.get('/users/login',function(req,res){
+  Login.find({}).then(function(listOfUsers){
+    var arrayLogins=[];
+    for(var i=0;i<listOfUsers.length;i++){
+      var result=functions.verifyLogin(listOfUsers[i])
+        console.log(result);
+        if(result === true){
+          arrayLogins.push(listOfUsers[i]);
+        }
+        else if(result === false) {
+         console.log("entre");
+          Login.findOneAndDelete({lastToken:listOfUsers[i].lastToken}).then(function(status){
+           console.log({stat: "Old logins", status});
+         })
+       }
+       
+ }
+  res.send(arrayLogins);
+  });
+  
+  
+});
 
 router.get('/users',function(req,res,next){	
   Register.find({}).then(function(listOfUsers){	
@@ -92,7 +116,7 @@ router.get('/myNewMessages', functions.verifyToken, function(req,res){
 // Registro de usuarios
 router.post('/users/register',function(req,res,next){
       
-  Register.findOne({"name":req.body.name},function (err,exist){
+  Register.findOne({"email":req.body.email},function (err,exist){
       if(err){
         res.status(500).send("Hubo un error con la registración");
       }
@@ -106,14 +130,18 @@ router.post('/users/register',function(req,res,next){
         var hashPassword = bcrypt.hashSync(req.body.password,8);
         req.password = hashPassword;
         
-        Register.create(req.body,function(err, exist){
+        Register.create({
+          name: req.body.name,
+          password: hashPassword,
+          email: req.body.email
+        },function(err, exist){
           
           //Error si ya está registrado el email 
           if(err){
             res.status(401).send("Error "+ err);
           }
           else{
-            console.log(register);
+            console.log(exist);
             res.status(200).send({status:"ok", message:"Se ha registrado correctamente"});
           }
          
@@ -164,10 +192,17 @@ router.post('/users/login',function(req,res){
         
         // Si la clave existe, genero 
         var token = jwt.sign({ id: exist._id }, config.secret, {
-           expiresIn: 3600 
+           expiresIn: 600 
           
          });// exira en 2 minutos
-         res.status(200).send({status:"Ok", message:"Login correcto", token: token});
+         Login.create({
+           "username": req.body.name,
+           "email": req.body.email,
+           "lastToken": token
+         }).then(function(result){
+            res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
+         });
+         
   
   });
 });
