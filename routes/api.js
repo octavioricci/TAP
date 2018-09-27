@@ -47,7 +47,11 @@ router.get('/users',function(req,res,next){
         email: listOfUsers[i].email
       });
     }
-    res.send(arrayUsers);                     
+    let respuesta = {
+        "name": "Octavio",
+        "email": "octavioricci@gmail.com"
+    };
+    res.status(200).send(respuesta);                     
   }).catch(function(err){
       res.status(500).send('Hubo un error recuperando los usuarios', error.message);
   });

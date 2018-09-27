@@ -24,5 +24,11 @@
     "mongojs": "^2.6.0",
     "mongoose": "^5.2.13",
     "nodemon": "^1.18.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "request": "^2.88.0",
+    "supertest": "^3.3.0"
   }
 }

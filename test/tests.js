@@ -1,18 +1,22 @@
-var assert = require('assert');
-var request = require('supertest');
-//var chai = require('chai');
-var app = require('../app.js');
+var expect  = require("chai").expect;
+var chai = require("chai")
+var request = require("request");
+var chaiHttp = require("chai-http");
+chai.use(chaiHttp);
 
-//var expect = chai.expect;
-var request = request('http://tap-octavioricci820054.codeanyapp.com:8080');
 
-describe('users', function(){
-  describe('GET', function(){
-    if('Should return all users in JSON format', function(done){
-      request.get('/api/users')
-        .expect('Content-Type',/json/)
-        .expect('200',done);
+
+describe("Tests #1", function() {
+    describe("Bring all Users", function() {
+      var url = "http://tap-octavioricci820054.codeanyapp.com:8080/api/users";
+      it("Should return Status 200", function(done) {
+        request(url, function(error, response, body) {
+            expect(response.statusCode).to.equal(200);
+            done();
+          });
+      });
     });
-  });
 });
+ 
+  
 
