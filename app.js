@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 // Monto el router como un middleware en el path /api
 // Es el equivalente a : 
 //                      const router = require('./routes/api');
-//                      app.user('api'/,router);
+//                      app.use('api'/,router);
 app.use('/api',require('./routes/api'));
 
 
