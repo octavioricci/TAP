@@ -23,12 +23,19 @@ mongoose.Promise = global.Promise;
 // Middleware que toma los datos del body y los parsea a json
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
- 
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Monto el router como un middleware en el path /api
 // Es el equivalente a : 
 //                      const router = require('./routes/api');
 //                      app.use('api'/,router);
 app.use('/api',require('./routes/api'));
+
 
 
 // Midleware que antes de cada peticion al router muestra la fecha 
@@ -37,8 +44,8 @@ app.use(function(req,res,next){
   next();
 });
 
-app.listen(8080,function(){
-    console.log("Server listening on por 8080")
+app.listen(3000,function(){
+    console.log("Server listening on por 3000")
 });
 
 

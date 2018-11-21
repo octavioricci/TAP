@@ -43,6 +43,7 @@ router.get('/users',function(req,res,next){
     
     for (var i=0; i<listOfUsers.length; i++){
       arrayUsers.push({
+        id: listOfUsers[i]._id,
         name: listOfUsers[i].name,
         email: listOfUsers[i].email
       });
