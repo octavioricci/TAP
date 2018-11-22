@@ -166,7 +166,7 @@ router.post('/users/login',function(req,res){
         
         // Si la clave existe, genero 
         var token = jwt.sign({ id: exist._id }, config.secret, {
-           expiresIn: 600 
+           expiresIn: 6000 
           
          });// exira en 2 minutos
          Login.create({

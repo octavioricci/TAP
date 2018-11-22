@@ -1,5 +1,6 @@
 var express=require('express');
 var bodyParser=require('body-parser');
+var cors = require('cors');
 const router = require('./routes/api');
 var app=express();
 const mongoose=require('mongoose');
@@ -20,15 +21,23 @@ mongoose.connect(MONGO_URL, function(err, success){
 });
 mongoose.Promise = global.Promise;
 
+
+app.use(cors());
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  //res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Origin,Content-Type, Authorization, x-id, Content-Length, X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
+
+
+
 // Middleware que toma los datos del body y los parsea a json
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
 
 // Monto el router como un middleware en el path /api
 // Es el equivalente a : 
