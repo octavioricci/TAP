@@ -88,7 +88,7 @@ router.get('/myMessages',functions.verifyToken,function(req,res){
 
 // Registro de usuarios
 router.post('/users/register',function(req,res,next){
-      
+  console.log("Entre");
   Register.findOne({"email":req.body.email},function (err,exist){
       if(err){
         res.status(500).send("Hubo un error con la registración");
@@ -114,7 +114,7 @@ router.post('/users/register',function(req,res,next){
             res.status(401).send("Error "+ err);
           }
           else{
-            console.log(exist);
+                       
             res.status(200).send({status:"ok", message:"Se ha registrado correctamente"});
           }
          
@@ -148,16 +148,20 @@ router.post('/messages',functions.verifyToken, function(req,res,next){
 });
 
 
-// Endpoint que me indica quienes están logueados
+// Endpoint para loguearse
 router.post('/users/login',function(req,res){
   Register.findOne({"email":req.body.email}, function(err,exist){
+    
+    var login = functions.verifyLogin(exist);
+    
     if(err) return res.status(500).send({status:error,message:"Hubo un error de login"});
     if(!exist) return res.status(404).send({status:Error,message:"Usuario no existe, debe registrarse"});
-   
     
-    
+      
+      
       // Si el usuario existe, valido que la clave sea válida, comparando la que envío por body con la almacenada
       // en la bbbdd
+      
       var pass = req.body.password;
       var compareHashPassword = bcrypt.compareSync(pass,exist.password);
          
@@ -169,13 +173,24 @@ router.post('/users/login',function(req,res){
            expiresIn: 6000 
           
          });// exira en 2 minutos
-         Login.create({
-           "username": req.body.name,
-           "email": req.body.email,
-           "lastToken": token
-         }).then(function(result){
-            res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
-         });
+      // Cheque que previamente no esté logueado
+      // Y si no estaba previamente logueado, se loguea
+      Login.find({email:req.body.email}, function (err,existLogin){
+          if (existLogin.length == 0){
+              console.log("USUARIO SE LOGUEA POR PRIMERA VEZ");
+              Login.create({
+             "username": req.body.name,
+             "email": req.body.email,
+             "lastToken": token
+           }).then(function(result){
+               res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
+            });
+          }
+          
+          
+          
+        }) 
+        
          
   
   });
