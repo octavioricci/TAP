@@ -48,7 +48,7 @@ router.get('/users',function(req,res,next){
         email: listOfUsers[i].email
       });
     }
-    res.status(200).send(arrayUsers);                     
+    res.status(200).send({arrayUsers});                     
   }).catch(function(err){
       res.status(500).send('Hubo un error recuperando los usuarios', error.message);
   });
@@ -60,8 +60,8 @@ router.get('/users',function(req,res,next){
 router.get('/users/me', functions.verifyToken, function(req, res,next) {
     
   Register.findOne({_id:req.id},{password:0},function(err,user){
-    if(err) return res.status(500).send("Hubo un problema para encontrar el usuario");
-    if(!user) return res.status(404).send("No se pudo encontrar el usuario");
+    if(err) return res.status(500).send({status: 4040, message:"Hubo un problema para encontrar el usuario"});
+    if(!user) return res.status(404).send({status: 404, message:"No se pudo encontrar el usuario"});
     res.status(200).send(user);
   });
 });
@@ -72,13 +72,13 @@ router.get('/myMessages',functions.verifyToken,function(req,res){
    
      Message.find({to:user.name},function(err,exist){
         if(err){
-          res.status(401).send("Error al recuperar los mensajes");
+          res.status(404).send({status: 404, message:"Error al recuperar los mensajes"});
         }
         if(!exist){
-          res.status(200).send("El usuario "+userTemp.name+" no tiene mensajes");
+          res.status(200).send({status: "OK",message:"El usuario "+userTemp.name+" no tiene mensajes"});
         }
         else if(exist){
-          res.status(200).send(exist);
+          res.status(200).send({status: "OK",message:exist});
         }
       });
     });
@@ -91,10 +91,10 @@ router.post('/users/register',function(req,res,next){
   console.log("Entre");
   Register.findOne({"email":req.body.email},function (err,exist){
       if(err){
-        res.status(500).send("Hubo un error con la registración");
+        res.status(404).send({status: 404, message:"Error al chequear usuarios registrados previos"});
       }
       if(exist){
-        res.status(505).send("Usuario existente, debe loguearse");
+        res.status(200).send({status: 200, message:"Usuario existente, debe loguearse"});
       }
       // Si el usuario no existe, procedo a registrarlo
       else if(!exist){
@@ -111,7 +111,7 @@ router.post('/users/register',function(req,res,next){
           
           //Error si ya está registrado el email 
           if(err){
-            res.status(401).send("Error "+ err);
+            res.status(409).send({status: 409, message: "El usuario ya existe"});
           }
           else{
                        
@@ -130,10 +130,10 @@ router.post('/messages',functions.verifyToken, function(req,res,next){
     
      Register.find({"name":req.body.to},function (err,exist){
       if(err){
-        res.status(500).send("Hubo un error");
+        res.status(404).send({status: 404, message:"Error al chequear el usuario destino"});
       }
       if(!exist){
-        res.status(505).send("El usuario al que quiere enviar el mensaje no existe");
+        res.status(404).send({status: 404, message:"El usuario al que quiere enviar el mensaje no existe"});
       }
       // Si el usuario no existe, procedo a registrarlo
       else if(exist){
@@ -154,8 +154,8 @@ router.post('/users/login',function(req,res){
     
     var login = functions.verifyLogin(exist);
     
-    if(err) return res.status(500).send({status:error,message:"Hubo un error de login"});
-    if(!exist) return res.status(404).send({status:Error,message:"Usuario no existe, debe registrarse"});
+    if(err) return res.status(404).send({status: 404,message:"Hubo un error de login"});
+    if(!exist) return res.status(404).send({status: 404,message:"Usuario no existe, debe registrarse"});
     
       
       
