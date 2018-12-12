@@ -168,25 +168,35 @@ router.post('/users/login',function(req,res){
         // Si la clave no coincide con la almacenada en la bbdd
         if (!compareHashPassword) return res.status(401).send({status:"error",message:"password inválida"});        
         
-        // Si la clave existe, genero 
-        var token = jwt.sign({ id: exist._id }, config.secret, {
-           expiresIn: 6000 
-          
-         });// exira en 2 minutos
+        
       // Cheque que previamente no esté logueado
       // Y si no estaba previamente logueado, se loguea
       Login.find({email:req.body.email}, function (err,existLogin){
-          if (existLogin.length == 0){
+        
+          if (existLogin.length === 0){
               console.log("USUARIO SE LOGUEA POR PRIMERA VEZ");
+              // Genero token para login
+              var token = jwt.sign({ id: exist._id }, config.secret, {
+                 expiresIn: 6000 
+              });// exira en 2 minutos
+            
               Login.create({
-             "username": req.body.name,
-             "email": req.body.email,
-             "lastToken": token
-           }).then(function(result){
-               res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
-            });
+                 "username": req.body.name,
+                 "email": req.body.email,
+                 "lastToken": token
+               }).then(function(result){
+                   res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
+                });
           }
-          
+          else if(existLogin.length > 0){
+              
+              var existingToken = existLogin[0].lastToken;
+              
+              res.status("200").send({status:"OK", message: "User Already Logged", token:existingToken});
+          }
+          if (err){
+            console.log(err);
+          }
           
           
         }) 
