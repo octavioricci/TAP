@@ -150,8 +150,14 @@ router.post('/messages',functions.verifyToken, function(req,res,next){
 
 // Endpoint para loguearse
 router.post('/users/login',function(req,res){
+  
   Register.findOne({"email":req.body.email}, function(err,exist){
     
+    
+    email=req.body.email;
+    globalToken='';
+  
+   
     var login = functions.verifyLogin(exist);
     
     if(err) return res.status(404).send({status: 404,message:"Hubo un error de login"});
@@ -179,6 +185,7 @@ router.post('/users/login',function(req,res){
               var token = jwt.sign({ id: exist._id }, config.secret, {
                  expiresIn: 6000 
               });// exira en 2 minutos
+             
             
               Login.create({
                  "username": req.body.name,
@@ -188,21 +195,43 @@ router.post('/users/login',function(req,res){
                    res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
                 });
           }
+        
+          // Si hay un login 
           else if(existLogin.length > 0){
               
               var existingToken = existLogin[0].lastToken;
-              
+            
+            // Si el token existente sigue válido
+            if (functions.verifyLogin(existLogin[0])){
               res.status("200").send({status:"OK", message: "User Already Logged", token:existingToken});
+            }
+            // Si el token existente ya expiró, genera otro
+            else{
+               Login.findOneAndDelete({lastToken:existingToken})
+                .then(function(user){
+                    // Genero token para login
+                    var token = jwt.sign({ id: exist._id }, config.secret, {
+                        expiresIn: 6000 
+                      
+                     });// exit
+                     
+                    Login.create({
+                       "email": email,
+                       "lastToken": globalToken
+                    }).then(function(result){
+                        res.status(200).send({status:"Ok", message:"Login correcto", token: token});  
+                        });
+                  }) 
           }
           if (err){
             console.log(err);
           }
+     
           
-          
-        }) 
-        
-         
+        }// cierre elseIf
+     
   
+   }); // Cierre Login Find
   });
 });
 
@@ -220,8 +249,7 @@ router.put('/users/:id',functions.verifyToken,function(req,res){
 router.delete('/users/:email', functions.verifyToken, function(req,res,next){
    Register.findOneAndDelete({email:req.params.email}).then(function(user){
     res.send(user);
-  }) 
-     
+  })     
 });
 
 module.exports = router;
