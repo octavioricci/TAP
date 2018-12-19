@@ -10,7 +10,7 @@ exports.verifyToken = function (req,res,next){
   // Si se ha pasado token
   jwt.verify(token,config.secret,function(err,decoded){
     if(err){
-      return res.status(401).send({auth:false, message:"Hubo un error con la validación del token o expiró el tiempo", status:401});
+      return res.status(402).send({auth:false, message:"Hubo un error con la validación del token o expiró el tiempo", status:401});
       // Si se validó bien el token
     } 
       

@@ -94,7 +94,7 @@ router.post('/users/register',function(req,res,next){
         res.status(404).send({status: 404, message:"Error al chequear usuarios registrados previos"});
       }
       if(exist){
-        res.status(200).send({status: 200, message:"Usuario existente, debe loguearse"});
+        res.status(201).send({status: 201, message:"Usuario existente, debe loguearse"});
       }
       // Si el usuario no existe, procedo a registrarlo
       else if(!exist){
@@ -160,7 +160,7 @@ router.post('/users/login',function(req,res){
    
     var login = functions.verifyLogin(exist);
     
-    if(err) return res.status(404).send({status: 404,message:"Hubo un error de login"});
+    if(err) return res.status(403).send({status: 403,message:"Hubo un error de login"});
     if(!exist) return res.status(404).send({status: 404,message:"Usuario no existe, debe registrarse"});
     
       
